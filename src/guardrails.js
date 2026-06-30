@@ -66,16 +66,14 @@ window.GA = window.GA || {};
   }
 
   function onClickCapture(e) {
-    var info = controlInfo(e.target);
-    console.log("[GA] click — guardActive:", guardActive, "bypass:", bypass, "target:", e.target.tagName, "ctrl:", info.ctrl && info.ctrl.tagName, "candidates:", info.candidates, "frame:", window === window.top ? "top" : "iframe:" + location.href);
     if (!guardActive || bypass) return;
+    var info = controlInfo(e.target);
 
     var hit = matchRule(info);
-    if (hit) { console.log("[GA] matched rule:", hit.label); return prompt(e, info.ctrl, hit, null); }
+    if (hit) { return prompt(e, info.ctrl, hit, null); }
 
     if (openCidrCheck && isSubmitLabel(info)) {
       var cidr = findOpenCidr(info.ctrl);
-      console.log("[GA] submit-label click — open-CIDR found:", cidr);
       if (cidr) {
         return prompt(e, info.ctrl,
           { label: "Open to the internet", note: "this rule allows traffic from 0.0.0.0/0" },
@@ -130,11 +128,7 @@ window.GA = window.GA || {};
       guardActive = !!isGuardedAccount;
       rules = (settings && settings.guardedActions) || [];
       openCidrCheck = !settings || settings.openCidrCheckEnabled !== false;
-      if (!armed) {
-        document.addEventListener("click", onClickCapture, true);
-        armed = true;
-        console.log("[GA] guardrails armed in frame:", window === window.top ? "top" : "iframe:" + location.href, "guardActive:", guardActive);
-      }
+      if (!armed) { document.addEventListener("click", onClickCapture, true); armed = true; }
     },
   };
 })(window.GA);

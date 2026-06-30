@@ -1,5 +1,5 @@
 var KEY = "ga_settings";
-var WAITLIST_URL = "https://example.com/guardrail-aws-team-waitlist"; // keep in sync with config.js
+var WAITLIST_URL = "https://tally.so/r/KYgGek?ref=aws"; // keep in sync with config.js
 
 function getSettings() {
   return new Promise(function (r) { chrome.storage.sync.get([KEY], function (res) { r((res && res[KEY]) || {}); }); });

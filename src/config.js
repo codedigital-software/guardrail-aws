@@ -6,7 +6,7 @@ window.GA = window.GA || {};
   GA.KEYS = { settings: "ga_settings" };
 
   // Soft demand probe — replace with the real Tally form before launch.
-  GA.WAITLIST_URL = "https://example.com/guardrail-aws-team-waitlist";
+  GA.WAITLIST_URL = "https://tally.so/r/KYgGek?ref=aws";
 
   GA.ENV = {
     PROD: { label: "PRODUCTION", color: "#c0392b", text: "#ffffff" },

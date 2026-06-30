@@ -19,7 +19,8 @@ window.GA = window.GA || {};
   var rules = [];
   var openCidrCheck = true;
   var armed = false;
-  var bypass = false;
+  var bypass = false;       // true only during the synchronous replay click
+  var bypassUntil = 0;      // short window after confirm: lets the action proceed
 
   var CONTROL = 'button,a,[role="button"],input[type="button"],input[type="submit"]';
   // Submit-style labels we'll scan for 0.0.0.0/0 in the surrounding form.
@@ -70,7 +71,7 @@ window.GA = window.GA || {};
   }
 
   function onClickCapture(e) {
-    if (!guardActive || bypass) return;
+    if (!guardActive || bypass || Date.now() < bypassUntil) return;
     var info = controlInfo(e.target);
 
     var hit = matchRule(info);
@@ -91,6 +92,11 @@ window.GA = window.GA || {};
     e.stopImmediatePropagation();
     confirmModal(rule, extra).then(function (ok) {
       if (!ok) return;
+      // Open a brief window where clicks pass, so the action proceeds no matter
+      // how: the auto-replay below (works for plain buttons), the user re-clicking
+      // a menu item whose dropdown had closed, or AWS's own follow-up confirm
+      // dialog. Also prevents a second prompt on multi-step deletes.
+      bypassUntil = Date.now() + 6000;
       bypass = true;
       try { ctrl.click(); } finally { bypass = false; }
     });

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Guardrail for AWS Console — Settings</title>
+<style>
+  body { font-family: Arial, sans-serif; color: #16325c; max-width: 640px; margin: 30px auto; padding: 0 18px; }
+  h1 { font-size: 20px; } h2 { font-size: 15px; margin-top: 26px; }
+  .opt { display: flex; align-items: center; gap: 8px; padding: 8px 0; font-size: 13px; }
+  .hint { font-size: 12px; color: #747b85; margin: 2px 0 8px; }
+  textarea { width: 100%; box-sizing: border-box; min-height: 80px; font-family: Consolas, monospace; font-size: 13px; padding: 8px; }
+  button { margin-top: 14px; padding: 8px 14px; border-radius: 6px; border: 1px solid #232f3e; background: #232f3e; color: #fff; cursor: pointer; }
+  .saved { color: #1e8449; font-size: 12px; margin-left: 10px; }
+  code { background: #f3f3f3; padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <h1>Guardrail for AWS Console</h1>
+
+  <h2>Behaviour</h2>
+  <label class="opt"><input type="checkbox" id="bannerEnabled" /> Show the account / environment banner</label>
+  <label class="opt"><input type="checkbox" id="rootWarningEnabled" /> Show a warning when signed in as the root user</label>
+  <label class="opt"><input type="checkbox" id="openCidrCheckEnabled" /> Warn when a Save/Add-rule form contains <code>0.0.0.0/0</code></label>
+
+  <h2>Production accounts <span style="font-weight:normal;color:#747b85;font-size:12px">— always guarded (one 12-digit account ID per line)</span></h2>
+  <div class="hint">Unknown accounts are guarded by default (fail-safe). List prod accounts here to be explicit.</div>
+  <textarea id="prodAccounts" placeholder="123456789012"></textarea>
+
+  <h2>Non-production accounts <span style="font-weight:normal;color:#747b85;font-size:12px">— never guarded</span></h2>
+  <div class="hint">Add the 12-digit IDs of your dev/test/staging accounts here, or use the popup button on each tab.</div>
+  <textarea id="safeAccounts" placeholder="098765432109"></textarea>
+
+  <h2>Guarded actions <span style="font-weight:normal;color:#747b85;font-size:12px">— button labels confirmed on production (one per line)</span></h2>
+  <div class="hint">Matched (case-insensitive) against a button's aria-label / value / text content.</div>
+  <textarea id="guardedActions" placeholder="Terminate&#10;Delete bucket&#10;Delete&#10;Delete function"></textarea>
+
+  <div><button id="save">Save</button><span class="saved" id="saved" style="display:none">Saved ✓</span></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

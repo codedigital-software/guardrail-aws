@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  body { width: 320px; margin: 0; font-family: Arial, sans-serif; color: #16325c; }
+  header { background: #232f3e; color: #fff; padding: 12px 14px; }
+  header h1 { margin: 0; font-size: 15px; }
+  header p { margin: 2px 0 0; font-size: 11px; opacity: .8; }
+  .body { padding: 12px 14px; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f0f0f0; }
+  .row:last-child { border-bottom: 0; }
+  .label { font-size: 13px; }
+  .acc { font-size: 12px; color: #888; font-family: Consolas, monospace; word-break: break-all; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+  .pill.prod { background: #c0392b; color: #fff; }
+  .pill.nonprod { background: #0b827c; color: #fff; }
+  .pill.unknown { background: #5867e8; color: #fff; }
+  button { width: 100%; margin-top: 8px; padding: 9px; border: 1px solid #232f3e; background: #fff; color: #232f3e; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  button:hover { background: #f4f6f8; }
+  .waitlist { display: block; margin-top: 12px; text-align: center; font-size: 12px; color: #ff9900; text-decoration: none; font-weight: 700; }
+  .hint { font-size: 11px; color: #888; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Guardrail for AWS Console</h1>
+    <p>Production safety net</p>
+  </header>
+  <div class="body">
+    <div class="row">
+      <span class="label">This account</span>
+      <span id="cls" class="pill">—</span>
+    </div>
+    <div class="row"><span id="acc" class="acc">—</span></div>
+
+    <button id="markprod">Mark this account as Production</button>
+    <button id="marksafe">Mark this account as Non-production</button>
+    <div class="hint" id="hint"></div>
+    <button id="opts">Settings</button>
+
+    <a id="waitlist" class="waitlist" href="#" target="_blank">Want a team version (org-wide policy)? →</a>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

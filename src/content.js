@@ -1,0 +1,54 @@
+// Guardrail (AWS) — content bootstrap. Wires the banner, the optional ROOT
+// warning, and the guardrails. Re-classifies on SPA navigations so the banner
+// updates when the user switches accounts/regions in the same tab.
+(function () {
+  "use strict";
+  var GA = window.GA; if (!GA) return;
+  var banner = null, rootBar = null;
+
+  function render(settings) {
+    var t = GA.account.classify(settings);
+    var env = GA.ENV[t] || GA.ENV.UNKNOWN;
+    var id = GA.account.id();
+    var region = GA.account.region();
+    var label = env.label + " · " + (id || "unverified") + (region ? " · " + region : "");
+
+    if (settings.bannerEnabled) {
+      if (!banner) {
+        banner = document.createElement("div");
+        banner.className = "ga-banner";
+        document.documentElement.appendChild(banner);
+      }
+      banner.style.background = env.color; banner.style.color = env.text;
+      banner.textContent = label;
+    }
+    if (settings.rootWarningEnabled && GA.account.isRoot()) {
+      if (!rootBar) {
+        rootBar = document.createElement("div");
+        rootBar.className = "ga-rootbar";
+        document.documentElement.appendChild(rootBar);
+      }
+      rootBar.textContent = "⚠ Signed in as ROOT USER — use an IAM user/role for daily work";
+    } else if (rootBar) { rootBar.remove(); rootBar = null; }
+
+    GA.guardrails.apply(GA.account.isGuarded(settings), settings);
+  }
+
+  // Popup asks for the page's detected account ID — answer from the live DOM.
+  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg && msg.type === "ga:account") {
+      sendResponse({ id: GA.account.id(), region: GA.account.region(), isRoot: GA.account.isRoot() });
+    }
+  });
+
+  GA.getSettings().then(function (s) {
+    render(s);
+    // SPA / pushState awareness — AWS Console swaps content without full loads.
+    var lastUrl = location.href;
+    var poke = function () {
+      if (location.href !== lastUrl) { lastUrl = location.href; GA.getSettings().then(render); }
+    };
+    window.addEventListener("popstate", poke);
+    setInterval(poke, 1500);
+  });
+})();

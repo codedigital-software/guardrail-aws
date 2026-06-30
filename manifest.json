@@ -3,7 +3,7 @@
   "name": "Guardrail for AWS Console",
   "version": "0.1.0",
   "description": "Confirm before destructive AWS Console actions (Terminate, Delete bucket/DB/Function, 0.0.0.0/0 rules) on production accounts.",
-  "minimum_chrome_version": "102",
+  "minimum_chrome_version": "119",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -32,7 +32,8 @@
       "js": ["src/config.js", "src/accountcontext.js", "src/guardrails.js", "src/content.js"],
       "css": ["src/content.css"],
       "run_at": "document_idle",
-      "all_frames": true
+      "all_frames": true,
+      "match_origin_as_fallback": true
     }
   ]
 }

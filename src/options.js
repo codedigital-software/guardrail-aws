@@ -8,7 +8,6 @@ var DEFAULTS = {
   guardedActions: [
     { id: "terminate-instances", label: "Terminate", note: "EC2 instance termination" },
     { id: "delete-bucket", label: "Delete bucket", note: "S3 bucket deletion" },
-    { id: "delete-database", label: "Delete", note: "RDS / database deletion" },
     { id: "delete-function", label: "Delete function", note: "Lambda function deletion" },
   ],
 };

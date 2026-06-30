@@ -26,7 +26,16 @@
 .ga-modal-body { padding: 16px; font-size: 13px; line-height: 1.5; }
 .ga-modal-body code { background: #f3f3f3; padding: 1px 5px; border-radius: 3px; font-family: Consolas, monospace; }
 .ga-modal-btns { display: flex; gap: 8px; justify-content: flex-end; padding: 0 16px 16px; }
-.ga-modal-btns button { padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid #c9c9c9; background: #fff; }
+/* Explicit resets — the AWS Console (Cloudscape) global button styles otherwise
+   bleed in and blank these out. */
+.ga-modal-btns button {
+  -webkit-appearance: none; appearance: none;
+  padding: 8px 16px; border-radius: 6px; cursor: pointer;
+  border: 1px solid #c9c9c9; background: #fff; color: #16325c;
+  font: 600 13px/1.2 Arial, sans-serif; min-width: 72px; text-align: center;
+  box-shadow: none; letter-spacing: normal; text-transform: none;
+}
 .ga-modal-btns .ga-confirm { background: #c0392b; border-color: #c0392b; color: #fff; }
 .ga-modal-btns .ga-confirm:hover { background: #a93226; }
+.ga-modal-btns .ga-cancel { color: #16325c; }
 .ga-modal-btns .ga-cancel:hover { background: #f3f3f3; }

@@ -23,10 +23,12 @@ window.GA = window.GA || {};
     prodAccounts: [],   // forced PRODUCTION (always guarded)
     // Guarded console actions. Matched (case-insensitive) against a button's
     // own aria-label / value / textContent.
+    // Specific labels only — a bare "Delete" matches every Delete button in the
+    // Console and would nag constantly. RDS deletion is intentionally omitted:
+    // AWS already requires typing "delete me", so native friction covers it.
     guardedActions: [
       { id: "terminate-instances", label: "Terminate", note: "EC2 instance termination" },
       { id: "delete-bucket", label: "Delete bucket", note: "S3 bucket deletion" },
-      { id: "delete-database", label: "Delete", note: "RDS / database deletion" },
       { id: "delete-function", label: "Delete function", note: "Lambda function deletion" },
     ],
     // Special check: when ANY save/add-rule form is submitted, scan it for

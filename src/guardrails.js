@@ -37,10 +37,11 @@ window.GA = window.GA || {};
   function matchRule(info) {
     for (var i = 0; i < rules.length; i++) {
       var lbl = rules[i].label.toLowerCase();
-      // Whole-token match; tolerates "Terminate", "Terminate instance", "Terminate instances".
-      if (info.candidates.some(function (c) { return c === lbl || c.split(/[\s()]+/).indexOf(lbl) !== -1 || c.indexOf(lbl + " ") === 0 || c.indexOf(" " + lbl) !== -1; })) {
-        return rules[i];
-      }
+      // Word-boundary phrase match: the label must appear as whole words in a
+      // candidate ("terminate" matches "Terminate instance" but not "determinate";
+      // "delete bucket" matches only that phrase, not a bare "Delete").
+      var re = new RegExp("(^|[^a-z])" + lbl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^a-z]|$)");
+      if (info.candidates.some(function (c) { return re.test(c); })) return rules[i];
     }
     return null;
   }

@@ -43,12 +43,19 @@
 
   GA.getSettings().then(function (s) {
     render(s);
-    // SPA / pushState awareness — AWS Console swaps content without full loads.
+    // SPA / pushState awareness AND late-rendered account-menu detection. AWS
+    // populates the account ID asynchronously after document_idle, so we also
+    // re-render when the scraped ID changes (e.g. null -> 606025553431).
     var lastUrl = location.href;
+    var lastAcc = GA.account.id();
     var poke = function () {
-      if (location.href !== lastUrl) { lastUrl = location.href; GA.getSettings().then(render); }
+      var url = location.href, acc = GA.account.id();
+      if (url !== lastUrl || acc !== lastAcc) {
+        lastUrl = url; lastAcc = acc;
+        GA.getSettings().then(render);
+      }
     };
     window.addEventListener("popstate", poke);
-    setInterval(poke, 1500);
+    setInterval(poke, 1000);
   });
 })();

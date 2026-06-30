@@ -29,7 +29,8 @@ window.GA = window.GA || {};
     guardedActions: [
       { id: "terminate-instances", label: "Terminate", note: "EC2 instance termination" },
       { id: "delete-bucket", label: "Delete bucket", note: "S3 bucket deletion" },
-      { id: "delete-function", label: "Delete function", note: "Lambda function deletion" },
+      // Lambda's button is just "Delete" — scope the generic label to /lambda/ pages.
+      { id: "delete-function", label: "Delete", note: "Lambda function deletion", urlMatch: "/lambda/" },
     ],
     // Special check: when ANY save/add-rule form is submitted, scan it for
     // 0.0.0.0/0 and warn if present (the "I opened SSH to the world" mistake).

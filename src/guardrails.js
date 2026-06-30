@@ -35,7 +35,11 @@ window.GA = window.GA || {};
   }
 
   function matchRule(info) {
+    var href = location.href.toLowerCase();
     for (var i = 0; i < rules.length; i++) {
+      // urlMatch scopes a generic label (e.g. bare "Delete") to one service, so
+      // it doesn't fire on every Delete button across the Console.
+      if (rules[i].urlMatch && href.indexOf(rules[i].urlMatch) === -1) continue;
       var lbl = rules[i].label.toLowerCase();
       // Word-boundary phrase match: the label must appear as whole words in a
       // candidate ("terminate" matches "Terminate instance" but not "determinate";

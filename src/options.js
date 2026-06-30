@@ -8,7 +8,7 @@ var DEFAULTS = {
   guardedActions: [
     { id: "terminate-instances", label: "Terminate", note: "EC2 instance termination" },
     { id: "delete-bucket", label: "Delete bucket", note: "S3 bucket deletion" },
-    { id: "delete-function", label: "Delete function", note: "Lambda function deletion" },
+    { id: "delete-function", label: "Delete", note: "Lambda function deletion", urlMatch: "/lambda/" },
   ],
 };
 
@@ -31,7 +31,11 @@ document.getElementById("save").addEventListener("click", function () {
   var prod = lines(document.getElementById("prodAccounts").value).map(digits).filter(function (x) { return x.length === 12; });
   var safe = lines(document.getElementById("safeAccounts").value).map(digits).filter(function (x) { return x.length === 12; });
   var actions = lines(document.getElementById("guardedActions").value).map(function (label) {
-    return { id: label.toLowerCase().replace(/\s+/g, "-"), label: label, note: "guarded action" };
+    // Preserve note + urlMatch scoping for labels that match a known default.
+    var def = DEFAULTS.guardedActions.filter(function (a) { return a.label.toLowerCase() === label.toLowerCase(); })[0];
+    var a = { id: label.toLowerCase().replace(/\s+/g, "-"), label: label, note: (def && def.note) || "guarded action" };
+    if (def && def.urlMatch) a.urlMatch = def.urlMatch;
+    return a;
   });
   var s = {
     bannerEnabled: document.getElementById("bannerEnabled").checked,

@@ -6,6 +6,7 @@
   var GA = window.GA; if (!GA) return;
   var banner = null, rootBar = null;
   var isTopFrame = window.top === window;
+  console.log("[GA] content loaded — isTop:", isTopFrame, "url:", location.href);
 
   function render(settings) {
     // Guardrails arm in every frame (clicks fire inside iframes); banner +

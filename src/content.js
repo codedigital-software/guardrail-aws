@@ -5,8 +5,13 @@
   "use strict";
   var GA = window.GA; if (!GA) return;
   var banner = null, rootBar = null;
+  var isTopFrame = window.top === window;
 
   function render(settings) {
+    // Guardrails arm in every frame (clicks fire inside iframes); banner +
+    // root warning render only in the top frame to avoid N stacked banners.
+    GA.guardrails.apply(GA.account.isGuarded(settings), settings);
+    if (!isTopFrame) return;
     var t = GA.account.classify(settings);
     var env = GA.ENV[t] || GA.ENV.UNKNOWN;
     var id = GA.account.id();
@@ -30,16 +35,17 @@
       }
       rootBar.textContent = "⚠ Signed in as ROOT USER — use an IAM user/role for daily work";
     } else if (rootBar) { rootBar.remove(); rootBar = null; }
-
-    GA.guardrails.apply(GA.account.isGuarded(settings), settings);
   }
 
-  // Popup asks for the page's detected account ID — answer from the live DOM.
-  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg && msg.type === "ga:account") {
-      sendResponse({ id: GA.account.id(), region: GA.account.region(), isRoot: GA.account.isRoot() });
-    }
-  });
+  // Popup asks the top frame for the detected account ID. (sendMessage targets
+  // the top frame by default, so only register the listener there.)
+  if (isTopFrame) {
+    chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+      if (msg && msg.type === "ga:account") {
+        sendResponse({ id: GA.account.id(), region: GA.account.region(), isRoot: GA.account.isRoot() });
+      }
+    });
+  }
 
   GA.getSettings().then(function (s) {
     render(s);

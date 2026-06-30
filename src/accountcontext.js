@@ -25,8 +25,8 @@ window.GA = window.GA || {};
     return p ? p[1] : null;
   }
 
-  function detectAccountId() {
-    // Prefer narrow nav-area scrapes; broaden as needed.
+  function scrapeDoc(doc) {
+    if (!doc) return null;
     var hints = [
       "[data-testid*='account' i]",
       "[aria-label*='account' i]",
@@ -34,7 +34,7 @@ window.GA = window.GA || {};
       "nav, header",
     ];
     for (var i = 0; i < hints.length; i++) {
-      var nodes = document.querySelectorAll(hints[i]);
+      var nodes = doc.querySelectorAll(hints[i]);
       for (var j = 0; j < nodes.length; j++) {
         var hit = fromText(nodes[j].textContent || "") ||
                   fromText(nodes[j].getAttribute && nodes[j].getAttribute("aria-label") || "") ||
@@ -42,7 +42,23 @@ window.GA = window.GA || {};
         if (hit) return hit;
       }
     }
-    return fromText(document.body && document.body.innerText || "");
+    return fromText(doc.body && doc.body.innerText || "");
+  }
+
+  function detectAccountId() {
+    // Try our own frame first, then walk up parent frames (AWS renders service
+    // editors inside same-origin iframes; the account ID lives in the top shell).
+    var ours = scrapeDoc(document);
+    if (ours) return ours;
+    try {
+      var w = window;
+      while (w.parent && w.parent !== w) {
+        w = w.parent;
+        var hit = scrapeDoc(w.document);
+        if (hit) return hit;
+      }
+    } catch (e) { /* cross-origin parent — give up, fail-safe to UNKNOWN */ }
+    return null;
   }
 
   function detectRegion() {

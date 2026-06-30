@@ -20,7 +20,8 @@ window.GA = window.GA || {};
   var openCidrCheck = true;
   var armed = false;
   var bypass = false;       // true only during the synchronous replay click
-  var bypassUntil = 0;      // short window after confirm: lets the action proceed
+  var bypassUntil = 0;      // short window after confirm
+  var bypassLabel = "";     // ...scoped to the just-confirmed action, so other actions stay guarded
 
   var CONTROL = 'button,a,[role="button"],input[type="button"],input[type="submit"]';
   // Submit-style labels we'll scan for 0.0.0.0/0 in the surrounding form.
@@ -71,20 +72,19 @@ window.GA = window.GA || {};
   }
 
   function onClickCapture(e) {
-    if (!guardActive || bypass || Date.now() < bypassUntil) return;
+    if (!guardActive || bypass) return;
     var info = controlInfo(e.target);
 
-    var hit = matchRule(info);
-    if (hit) { return prompt(e, info.ctrl, hit, null); }
-
-    if (openCidrCheck && isSubmitLabel(info)) {
+    var rule = matchRule(info), extra = null;
+    if (!rule && openCidrCheck && isSubmitLabel(info)) {
       var cidr = findOpenCidr(info.ctrl);
-      if (cidr) {
-        return prompt(e, info.ctrl,
-          { label: "Open to the internet", note: "this rule allows traffic from 0.0.0.0/0" },
-          cidr);
-      }
+      if (cidr) { rule = { label: "Open to the internet", note: "this rule allows traffic from 0.0.0.0/0" }; extra = cidr; }
     }
+    if (!rule) return;
+    // Just-confirmed action proceeds (auto-replay, re-clicked menu item, or AWS's
+    // own follow-up confirm dialog). Other destructive actions stay guarded.
+    if (Date.now() < bypassUntil && rule.label === bypassLabel) return;
+    prompt(e, info.ctrl, rule, extra);
   }
 
   function prompt(e, ctrl, rule, extra) {
@@ -92,11 +92,8 @@ window.GA = window.GA || {};
     e.stopImmediatePropagation();
     confirmModal(rule, extra).then(function (ok) {
       if (!ok) return;
-      // Open a brief window where clicks pass, so the action proceeds no matter
-      // how: the auto-replay below (works for plain buttons), the user re-clicking
-      // a menu item whose dropdown had closed, or AWS's own follow-up confirm
-      // dialog. Also prevents a second prompt on multi-step deletes.
       bypassUntil = Date.now() + 6000;
+      bypassLabel = rule.label;
       bypass = true;
       try { ctrl.click(); } finally { bypass = false; }
     });

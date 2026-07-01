@@ -1,5 +1,9 @@
 # Guardrail for AWS Console — launch kit
 
+![Guardrail for AWS Console — demo](demo.gif)
+
+*Ready-made demo GIF (real extension UI over a reconstructed EC2 console). Attach it in the "links in comments" reply and the Show HN post. The live-recording script below is optional if you'd rather capture a true screen recording.*
+
 This is the v0 demand experiment. The free + OSS shape exists to clear the
 enterprise trust bar; the Tally waitlist link in the popup is the WTP probe
 for a future paid team-policy tier. Watch installs + GitHub stars + waitlist
